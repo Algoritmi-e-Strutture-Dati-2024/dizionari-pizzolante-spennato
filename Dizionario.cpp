@@ -1,57 +1,82 @@
-#include <iostream>
+#include iostream
+#include string
 
-template <typename T>
-class Dizionario {
-private:
-    static const int TABLE_SIZE = 100; // Dimensione fissa della tabella hash
+template typename T
+class DizionarioEsteso {
+private
+    static const int TABLE_SIZE = 10;  Dimensione della tabella hash
     struct Entry {
-        std::string key;
+        stdstring key;
         T value;
-        bool isOccupied = false;
+        bool isOccupied = false;  Indica se lo slot è occupato
     };
 
-    Entry table[TABLE_SIZE];
+    Entry table[TABLE_SIZE];  Tabella hash
 
-    // Funzione hash di base
-    int hashFunction(const std::string key) const {
+    int hashFunction(const stdstring& key) const {
         int hash = 0;
-        for (char ch : key) {
-            hash = (hash * 31 + ch) % TABLE_SIZE; // Algoritmo di hashing semplice
+        for (char ch  key) {
+           hash += static_castint(ch);
         }
-        return hash;
+        return hash % TABLE_SIZE;
     }
 
-public:
-    // Metodo per aggiungere una coppia chiave-valore
-    void inserisci(const std::string key, const T value) {
-        int index = hashFunction(key);
+    int findSlot(int index, const stdstring& key) const {
+         Linear probing cerca la prossima posizione libera
+        while (table[index].isOccupied && table[index].key != key) {
+            index = (index + 1) % TABLE_SIZE;   Scansione ciclica
+        }
+        return index;
+    }
 
+public
+    void inserisci(const stdstring key, const T value) {
+        int index = hashFunction(key);
         if (table[index].isOccupied) {
-            std::cerr << "Collision detected for key: " << key << " at index " << index << ". Not handling collisions.\n";
-            return;
+            stdcout  Collisione trovata per la chiave   key   all'indice   index  . Risoluzione della collisione.n;
+            index = findSlot(index, key);   Trova la posizione libera
         }
 
         table[index].key = key;
         table[index].value = value;
         table[index].isOccupied = true;
+        stdcout  Inserito   key   =   value   all'indice   index  n;
     }
 
-    // Metodo per ottenere il valore associato a una chiave
-    T recupera(const std::string key) const {
+    void cancella(const stdstring key) {
         int index = hashFunction(key);
+        index = findSlot(index, key);   Trova la posizione corretta
+        if (table[index].isOccupied && table[index].key == key) {
+            table[index].isOccupied = false;
+            stdcout  Eliminata   key   all'indice   index  n;
+        } else {
+            stdcout  Chiave non trovata per eliminazione!n;
+        }
+    }
 
+    T recupera(const stdstring key) const {
+        int index = hashFunction(key);
+        index = findSlot(index, key);   Trova la posizione corretta
         if (table[index].isOccupied && table[index].key == key) {
             return table[index].value;
         }
-
-        return "Key not found!";
+        stdcout  Chiave non trovata per il recupero!n;
+        return T();   Restituisce un valore di default
     }
 
-    // Metodo per stampare il contenuto del dizionario
+    bool appartiene(const stdstring key) const {
+        int index = hashFunction(key);
+        index = findSlot(index, key);   Trova la posizione corretta
+        if (table[index].isOccupied && table[index].key == key) {
+            return true;
+        }
+        return false;
+    }
+
     void stampa() const {
-        for (int i = 0; i < TABLE_SIZE; ++i) {
+        for (int i = 0; i  TABLE_SIZE; ++i) {
             if (table[i].isOccupied) {
-                std::cout << "Index " << i << ": " << table[i].key << " => " << table[i].value << "\n";
+                stdcout  Indice   i     table[i].key   =   table[i].value  n;
             }
         }
     }
